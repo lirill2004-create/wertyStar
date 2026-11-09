@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<title>WertyStar</title>
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<style>
+:root{--bg:#060608;--card:#100a0c;--bd:#330a12;--red:#ff0033;--glow:rgba(255,0,51,.45);--sub:#a1a1aa;--gold:#fc0;--green:#22c55e}
+*{box-sizing:border-box;margin:0;padding:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;-webkit-tap-highlight-color:transparent;user-select:none;-webkit-user-select:none}
+input{user-select:text;-webkit-user-select:text}
+body{background:var(--bg);color:#fff;padding-bottom:calc(90px + env(safe-area-inset-bottom));overflow-x:hidden}
+.row{display:flex;gap:8px;align-items:center}.between{justify-content:space-between}
+.top{padding:12px 16px;background:rgba(6,6,8,.92);backdrop-filter:blur(16px);position:sticky;top:0;z-index:100;border-bottom:1px solid var(--bd);display:flex;align-items:center;justify-content:space-between}
+.pill{background:#16080c;border:1px solid var(--red);padding:6px 14px;border-radius:20px;font-size:13px;font-weight:700;display:flex;align-items:center;gap:6px;cursor:pointer}
+.pill i,.red{color:var(--red)}.pill .g{color:var(--gold)}
+.menu-btn{background:#16080c;border:1px solid var(--red);width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--red);cursor:pointer}
+.tab{display:none;padding:16px;animation:in .3s}.tab.on{display:block}
+@keyframes in{from{opacity:0;transform:translateY(10px)}}
+.banner{background:linear-gradient(135deg,#1f050a,#4a000f);border:1px solid var(--red);border-radius:18px;padding:20px;margin-bottom:16px;box-shadow:0 0 25px var(--glow)}
+.banner h2{font-size:22px;margin-bottom:6px;text-shadow:0 0 10px var(--red)}
+.banner p{font-size:12px;color:#ff99aa;margin-bottom:14px;line-height:1.4}
+.btn{background:linear-gradient(90deg,#ff0033,#b30024);color:#fff;border:0;padding:12px 20px;border-radius:12px;font-weight:800;font-size:14px;cursor:pointer;box-shadow:0 0 15px var(--red);display:inline-flex;align-items:center;gap:8px;justify-content:center;text-transform:uppercase}
+.btn:active{transform:scale(.96)}.gold{background:linear-gradient(90deg,#fc0,#d4a000);color:#000;box-shadow:0 0 15px rgba(255,204,0,.4)}.full{width:100%}
+.box{background:var(--card);border:1px solid var(--bd);border-radius:14px;padding:14px;box-shadow:inset 0 0 10px rgba(255,0,51,.05)}
+.click{cursor:pointer}.click:active{border-color:var(--red);box-shadow:0 0 15px var(--glow)}
+.quick{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:20px}
+.quick .box{text-align:center;padding:14px 6px;font-size:11px;font-weight:700}
+.quick i{display:block;font-size:22px;color:var(--red);margin-bottom:8px}
+.h{font-size:17px;font-weight:800;margin-bottom:14px;display:flex;align-items:center;justify-content:space-between;text-transform:uppercase}
+.h i{color:var(--red);margin-right:8px}.h a{font-size:12px;color:var(--red);cursor:pointer}
+.g2,.g3{display:grid;gap:12px;margin-bottom:24px}.g2{grid-template-columns:1fr 1fr}.g3{grid-template-columns:repeat(3,1fr);gap:10px}
+.pack{text-align:center;padding:16px 8px;position:relative}
+.pack b{display:block;font-size:18px;margin-bottom:4px}.pack b i{color:var(--gold);font-size:14px}.pack span{font-size:13px;color:var(--red);font-weight:800}
+.tag{position:absolute;top:-8px;right:-4px;background:var(--red);font-size:9px;font-weight:900;padding:2px 6px;border-radius:8px}
+.item{display:flex;flex-direction:column;justify-content:space-between;gap:8px}
+.ico{height:75px;border-radius:12px;background:#1a080d;border:1px solid #3d0d17;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:30px;color:var(--red)}
+.ico b{font-size:24px;color:#fff;text-shadow:0 0 12px var(--red)}.ico small{font-size:10px;color:#ff99aa}
+.item .t{font-size:13px;font-weight:800}.cost{font-size:16px;font-weight:900;color:var(--red)}
+.add{background:linear-gradient(90deg,#ff0033,#b30024);color:#fff;border:0;width:36px;height:36px;border-radius:10px;cursor:pointer;box-shadow:0 0 10px var(--red)}
+.add:active{transform:scale(.9)}
+.chips{display:flex;gap:8px;overflow-x:auto;padding-bottom:12px;margin-bottom:16px;scrollbar-width:none}
+.chip{background:var(--card);border:1px solid var(--bd);padding:8px 16px;border-radius:20px;font-size:12px;font-weight:700;white-space:nowrap;cursor:pointer;color:var(--sub)}
+.chip.on{background:var(--red);color:#fff;box-shadow:0 0 10px var(--red)}
+.list{display:flex;flex-direction:column;gap:12px;margin-bottom:24px}
+.li{display:flex;align-items:center;justify-content:space-between;cursor:pointer}
+.li .t{font-size:14px;font-weight:800}.li small{display:block;font-size:11px;color:var(--sub);margin-top:2px}
+.sum{border-color:var(--red);padding:18px;margin-top:20px;box-shadow:0 0 25px var(--glow)}
+.sum .r{display:flex;justify-content:space-between;margin-bottom:10px;font-size:14px;color:var(--sub)}
+.sum .tot{font-size:18px;font-weight:900;color:#fff;border-top:1px solid var(--bd);padding-top:12px;margin-bottom:18px}
+.ph{border-color:var(--red);padding:18px;display:flex;align-items:center;gap:16px;margin-bottom:20px}
+.av{width:64px;height:64px;border-radius:50%;border:2px solid var(--red);overflow:hidden;display:flex;align-items:center;justify-content:center;font-size:28px;color:var(--red);flex:none}
+.av img{width:100%;height:100%;object-fit:cover}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:24px}
+.stats .box{text-align:center;padding:14px 8px}.stats b{display:block;font-size:18px;color:var(--red)}.stats small{font-size:10px;color:var(--sub);text-transform:uppercase}
+nav{position:fixed;bottom:0;left:0;right:0;padding-bottom:env(safe-area-inset-bottom);background:#0b0709;border-top:1px solid var(--red);display:flex;z-index:999;box-shadow:0 -4px 20px rgba(255,0,51,.25)}
+nav div{flex:1;height:68px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;color:var(--sub);font-size:11px;cursor:pointer;position:relative}
+nav i{font-size:20px}nav .on{color:var(--red);text-shadow:0 0 10px var(--red)}
+#cb{position:absolute;top:8px;right:22%;background:var(--red);color:#fff;font-size:10px;font-weight:900;width:16px;height:16px;border-radius:50%;display:none;align-items:center;justify-content:center}
+#ov{position:fixed;inset:0;background:rgba(0,0,0,.8);backdrop-filter:blur(8px);z-index:1000;visibility:hidden;opacity:0;transition:.3s}#ov.on{visibility:visible;opacity:1}
+.modal{position:fixed;bottom:-100%;left:0;right:0;background:var(--card);border-top:1px solid var(--red);border-radius:24px 24px 0 0;padding:24px 20px calc(34px + env(safe-area-inset-bottom));z-index:1002;transition:bottom .4s cubic-bezier(.16,1,.3,1);max-height:85vh;overflow-y:auto}.modal.on{bottom:0}
+.mt{font-size:18px;font-weight:900;margin-bottom:16px;display:flex;justify-content:space-between;align-items:center;text-transform:uppercase}.mt i{color:var(--sub);cursor:pointer;padding:6px}
+.opt{margin-bottom:12px}.opt .ic{width:44px;height:44px;background:#1a080d;border:1px solid var(--red);border-radius:12px;display:flex;align-items:center;justify-content:center;color:var(--red);font-size:20px;margin-right:14px}
+.opt .row{gap:0}
+label{display:block;font-size:12px;color:var(--sub);margin-bottom:6px;font-weight:700}.ig{margin-bottom:16px}
+input{width:100%;background:var(--bg);border:1px solid var(--bd);border-radius:12px;padding:14px;color:#fff;font-size:16px;outline:none}input:focus{border-color:var(--red)}
+#drawer{position:fixed;top:0;right:-300px;bottom:0;width:280px;background:#0b0709;border-left:1px solid var(--red);z-index:1001;padding:24px 20px;transition:right .4s cubic-bezier(.16,1,.3,1);display:flex;flex-direction:column;justify-content:space-between}#drawer.on{right:0}
+#drawer h3{margin-bottom:24px;color:var(--red)}#drawer .box{margin-bottom:10px}
+#toast{position:fixed;top:20px;left:50%;transform:translateX(-50%) translateY(-120px);background:#16080c;border:1px solid var(--red);padding:12px 24px;border-radius:14px;font-weight:800;font-size:13px;z-index:9999;transition:transform .4s;text-align:center;max-width:90%}#toast.on{transform:translateX(-50%)}
+</style>
+</head>
+<body>
+<div id="toast"></div>
+
+<div class="top">
+  <div class="row">
+    <div class="pill" onclick="openM('m-dep')"><i class="fa-solid fa-wallet"></i><span id="bal">0.00</span> ₴</div>
+    <div class="pill" onclick="openM('m-dep')"><i class="fa-solid fa-coins g"></i><span id="stars">0</span></div>
+  </div>
+  <div class="menu-btn" onclick="toggleDrawer()"><i class="fa-solid fa-bars"></i></div>
+</div>
+
+<div id="t-home" class="tab on">
+  <div class="banner">
+    <h2>WertyStar 🔥</h2>
+    <p>Маркет Telegram Stars, Premium, номеров и услуг.</p>
+    <button class="btn" onclick="openM('m-dep')"><i class="fa-solid fa-wallet"></i> Пополнить баланс</button>
+  </div>
+  <div class="quick">
+    <div class="box click" onclick="openM('m-dep')"><i class="fa-solid fa-circle-plus"></i>Пополнить</div>
+    <div class="box click" onclick="go('numbers')"><i class="fa-solid fa-mobile-screen"></i>Номера</div>
+    <div class="box click" onclick="tab('t-stars')"><i class="fa-solid fa-star"></i>Звёзды</div>
+    <div class="box click" onclick="support()"><i class="fa-solid fa-headset"></i>Поддержка</div>
+  </div>
+  <div class="h"><div><i class="fa-solid fa-skull"></i>Горячие предложения</div><a onclick="go('all')">Все →</a></div>
+  <div class="g2" id="hot"></div>
+</div>
+
+<div id="t-stars" class="tab">
+  <div class="h"><div><i class="fa-solid fa-star"></i>Пакеты Stars</div></div>
+  <div class="g3" id="packs"></div>
+</div>
+
+<div id="t-market" class="tab">
+  <div class="h"><div><i class="fa-solid fa-store"></i>Каталог</div></div>
+  <div class="chips">
+    <div class="chip on" data-c="all">Все</div><div class="chip" data-c="numbers">📱 Номера</div>
+    <div class="chip" data-c="stars">⭐ Звёзды</div><div class="chip" data-c="premium">💎 Premium</div>
+    <div class="chip" data-c="services">🛠️ Услуги</div>
+  </div>
+  <div class="g2" id="market"></div>
+</div>
+
+<div id="t-cart" class="tab">
+  <div class="h"><div><i class="fa-solid fa-cart-shopping"></i>Корзина</div></div>
+  <div id="c-empty" style="text-align:center;padding:40px 20px">
+    <i class="fa-solid fa-basket-shopping" style="font-size:50px;color:var(--bd);margin-bottom:14px"></i>
+    <p style="color:var(--sub);margin-bottom:20px">Корзина пустая</p>
+    <button class="btn" onclick="go('all')">В маркет</button>
+  </div>
+  <div id="c-full" style="display:none">
+    <div class="list" id="c-list"></div>
+    <div class="box sum">
+      <div class="r"><span>Товаров:</span><span id="c-n"></span></div>
+      <div class="r tot"><span>Итого:</span><span id="c-sum"></span></div>
+      <button class="btn full" onclick="checkout()"><i class="fa-solid fa-check-circle"></i> Оформить заказ</button>
+    </div>
+  </div>
+</div>
+
+<div id="t-profile" class="tab">
+  <div class="box ph">
+    <div class="av" id="av"><i class="fa-solid fa-user"></i></div>
+    <div><h3 id="pname">Гость</h3><p id="pid" style="font-size:12px;color:var(--sub)"></p></div>
+  </div>
+  <div class="stats">
+    <div class="box"><b id="s-or">0</b><small>Заказов</small></div>
+    <div class="box"><b id="s-sp">0 ₴</b><small>Потрачено</small></div>
+    <div class="box"><b id="s-rf">0</b><small>Рефералов</small></div>
+  </div>
+  <div class="h"><div><i class="fa-solid fa-gear"></i>Настройки</div></div>
+  <div class="list">
+    <div class="box li click" onclick="openM('m-dep')"><div><span class="t"><i class="fa-solid fa-wallet red"></i> Пополнить баланс</span><small>Картой, криптой или Stars</small></div><i class="fa-solid fa-chevron-right"></i></div>
+    <div class="box li click" onclick="copyRef()"><div><span class="t"><i class="fa-solid fa-share-nodes red"></i> Реферальная ссылка</span><small>Нажми, чтобы скопировать</small></div><i class="fa-solid fa-copy"></i></div>
+    <div class="box li click" onclick="support()"><div><span class="t"><i class="fa-solid fa-headset red"></i> Поддержка</span><small>Написать в Telegram</small></div><i class="fa-solid fa-chevron-right"></i></div>
+  </div>
+</div>
+
+<nav>
+  <div class="on" data-t="t-home"><i class="fa-solid fa-house"></i>Главная</div>
+  <div data-t="t-stars"><i class="fa-solid fa-star"></i>Звёзды</div>
+  <div data-t="t-market"><i class="fa-solid fa-store"></i>Маркет</div>
+  <div data-t="t-cart"><i class="fa-solid fa-cart-shopping"></i>Корзина<span id="cb"></span></div>
+  <div data-t="t-profile"><i class="fa-solid fa-user"></i>Профиль</div>
+</nav>
+
+<div id="ov" onclick="closeAll()"></div>
+
+<div id="drawer">
+  <div>
+    <h3>WertyStar Menu</h3>
+    <div class="box click" onclick="openM('m-dep')"><i class="fa-solid fa-wallet red"></i> Пополнить баланс</div>
+    <div class="box click" onclick="go('numbers')"><i class="fa-solid fa-mobile-screen red"></i> Купить номер</div>
+    <div class="box click" onclick="copyRef()"><i class="fa-solid fa-share-nodes red"></i> Реферальная ссылка</div>
+    <div class="box click" onclick="support()"><i class="fa-solid fa-headset red"></i> Поддержка</div>
+  </div>
+  <div style="font-size:11px;color:var(--sub);text-align:center">WertyStar v6</div>
+</div>
+
+<div class="modal" id="m-dep">
+  <div class="mt"><span>Пополнение</span><i class="fa-solid fa-xmark" onclick="closeAll()"></i></div>
+  <div class="box opt click" onclick="openM('m-bank')"><div class="row between"><div class="row"><div class="ic"><i class="fa-solid fa-credit-card"></i></div><div><b>Карта</b><br><small style="color:var(--sub)">Перевод в гривнах</small></div></div><i class="fa-solid fa-chevron-right"></i></div></div>
+  <div class="box opt click" onclick="closeAll();toast('Крипта: через CryptoBot в боте')"><div class="row between"><div class="row"><div class="ic"><i class="fa-solid fa-gem"></i></div><div><b>Криптовалюта</b><br><small style="color:var(--sub)">TON / USDT</small></div></div><i class="fa-solid fa-chevron-right"></i></div></div>
+  <div class="box opt click" onclick="openM('m-st')"><div class="row between"><div class="row"><div class="ic"><i class="fa-solid fa-star" style="color:var(--gold)"></i></div><div><b>Telegram Stars</b><br><small style="color:var(--sub)">Зачисление на ₴ баланс</small></div></div><i class="fa-solid fa-chevron-right"></i></div></div>
+</div>
+
+<div class="modal" id="m-bank">
+  <div class="mt"><span>Выбери банк</span><i class="fa-solid fa-xmark" onclick="closeAll()"></i></div>
+  <div class="g2">
+    <div class="box pack click" onclick="openCard('Privat24')"><i class="fa-solid fa-building-columns" style="font-size:28px;color:var(--green)"></i><b>Privat24</b></div>
+    <div class="box pack click" onclick="openCard('Mono')"><i class="fa-solid fa-mobile-screen" style="font-size:28px;color:var(--red)"></i><b>Mono</b></div>
+  </div>
+</div>
+
+<div class="modal" id="m-card">
+  <div class="mt"><span id="bank-t">Пополнение</span><i class="fa-solid fa-xmark" onclick="closeAll()"></i></div>
+  <div class="ig"><label>Сумма перевода (₴)</label><input type="number" id="c-amt" value="100" inputmode="numeric"></div>
+  <div class="ig"><label>Номер карты</label><div class="row"><input id="c-num" readonly><button class="btn" onclick="copyText(CFG.card,'Номер карты скопирован')"><i class="fa-solid fa-copy"></i></button></div></div>
+  <button class="btn full" onclick="submitCard()"><i class="fa-solid fa-check"></i> Я оплатил(а)</button>
+</div>
+
+<div class="modal" id="m-st">
+  <div class="mt"><span>Пополнение звёздами</span><i class="fa-solid fa-xmark" onclick="closeAll()"></i></div>
+  <div class="ig"><label>Количество звёзд</label><input type="number" id="st-in" value="100" inputmode="numeric" oninput="calcSt()"></div>
+  <div class="box" style="border-color:var(--red);margin-bottom:16px"><small style="color:var(--sub)">Получишь на баланс</small><div id="st-res" style="font-size:20px;font-weight:900;color:var(--green)"></div></div>
+  <div class="g3" id="st-presets" style="margin-bottom:16px"></div>
+  <button class="btn gold full" onclick="payStars()"><i class="fa-solid fa-star"></i> Оплатить <span id="st-btn"></span> ⭐</button>
+</div>
+
+<div class="modal" id="m-custom">
+  <div class="mt"><span>Своя сумма</span><i class="fa-solid fa-xmark" onclick="closeAll()"></i></div>
+  <div class="ig"><label>Сколько Stars купить (50–10000)</label><input type="number" id="cu-in" value="300" inputmode="numeric" oninput="calcCu()"></div>
+  <p style="margin-bottom:16px;color:var(--sub)">Цена: <b id="cu-p" style="color:#fff"></b></p>
+  <button class="btn full" onclick="addCustom()"><i class="fa-solid fa-cart-plus"></i> В корзину</button>
+</div>
+
+<script>
+// ===== НАСТРОЙКИ (меняй здесь) =====
+const CFG = {
+  card: '5100 9473 3362 8436',   // карта для переводов
+  bot: 'ИМЯ_БОТА_БЕЗ_@',         // username бота, для реферальной ссылки
+  support: 'sm_0xlo',            // username поддержки
+  rate: 0.375,                   // 1 звезда = 0.375 ₴ (как RATE_SELL в боте)
+  starPrice: 0.80                // цена 1 звезды в магазине, ₴
+};
+
+const tg = (window.Telegram && Telegram.WebApp) || {};
+try { tg.ready(); tg.expand(); tg.setHeaderColor('#060608'); tg.setBackgroundColor('#060608'); } catch (e) {}
+const $ = id => document.getElementById(id);
+const q = new URLSearchParams(location.search);   // бот может передать ?bal=&stars=&orders=&spent=&refs=
+
+// ===== КАТАЛОГ =====
+const nums = [['Марокко','+212',79],['США','+1',80],['Индия','+91',80],['Бангладеш','+880',80],['Канада','+1',79],['Индонезия','+62',80],['Филиппины','+63',99],['Нигерия','+234',169],['Бразилия','+55',119],['Узбекистан','+998',119],['Мьянма','+95',80],['Эфиопия','+251',159],['Британия','+44',109],['Аргентина','+54',119],['Мексика','+52',119],['Таиланд','+66',109],['Украина','+380',199],['Казахстан','+7',159],['Египет','+20',119],['Польша','+48',159],['Турция','+90',130],['Чили','+56',109],['Германия','+49',220],['Алжир','+213',119],['Пакистан','+92',99],['Саудовская Аравия','+966',149],['Армения','+374',119],['Франция','+33',169]];
+const starPacks = [[50,40],[100,80],[250,200],[500,400],[1000,800],[2500,1950],[5000,3900],[10000,7800]];
+const CATALOG = [
+  ...starPacks.map(([n,p],i) => ({id:1+i, type:'stars', n, title:n+' Telegram Stars', price:p, icon:'fa-star'})),
+  {id:11, type:'premium', title:'TG Premium (3 месяца)', price:625, icon:'fa-gem'},
+  {id:12, type:'premium', title:'TG Premium (12 месяцев)', price:1590, icon:'fa-gem'},
+  {id:13, type:'services', title:'1000 рефералов в бота', price:500, icon:'fa-users'},
+  {id:14, type:'services', title:'Создание Mini App', price:2000, icon:'fa-code'},
+  ...nums.map(([c,code,p],i) => ({id:101+i, type:'numbers', title:'Номер: '+c, country:c, code, price:p}))
+];
+const byId = id => CATALOG.find(i => i.id === id);
+
+function card(it) {
+  const ico = it.code ? `<small>${it.country}</small><b>${it.code}</b>` : `<i class="fa-solid ${it.icon}"></i>`;
+  return `<div class="box item"><div class="ico">${ico}</div><div class="t">${it.title}</div>
+    <div class="row between"><span class="cost">${it.price} ₴</span><button class="add" onclick="addToCart(${it.id})"><i class="fa-solid fa-cart-plus"></i></button></div></div>`;
+}
+function renderMarket(cat) {
+  $('market').innerHTML = CATALOG.filter(i => cat === 'all' || i.type === cat).map(card).join('');
+  document.querySelectorAll('.chip').forEach(c => c.classList.toggle('on', c.dataset.c === cat));
+}
+$('hot').innerHTML = [2, 11].map(id => card(byId(id))).join('');
+$('packs').innerHTML = CATALOG.filter(i => i.type === 'stars').map(i =>
+  `<div class="box pack click" onclick="addToCart(${i.id})">${i.id === 3 ? '<div class="tag">TOP</div>' : ''}${i.id === 4 ? '<div class="tag">HIT</div>' : ''}<b>${i.n >= 10000 ? '10k' : i.n} <i class="fa-solid fa-star"></i></b><span>${i.price} ₴</span></div>`).join('')
+  + `<div class="box pack click" onclick="openM('m-custom');calcCu()"><b><i class="fa-solid fa-pen" style="color:var(--red)"></i></b><span>Своя сумма</span></div>`;
+$('st-presets').innerHTML = [100,250,500,1000,2500,5000].map(n =>
+  `<div class="box pack click" onclick="setSt(${n})"><b>${n}</b><span>${(n*CFG.rate).toFixed(0)} ₴</span></div>`).join('');
+document.querySelectorAll('.chip').forEach(c => c.onclick = () => renderMarket(c.dataset.c));
+document.querySelectorAll('nav div').forEach(n => n.onclick = () => tab(n.dataset.t));
+
+// ===== НАВИГАЦИЯ И UI =====
+function tab(id) {
+  closeAll();
+  document.querySelectorAll('.tab').forEach(t => t.classList.toggle('on', t.id === id));
+  document.querySelectorAll('nav div').forEach(n => n.classList.toggle('on', n.dataset.t === id));
+  window.scrollTo(0, 0);
+  if (tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
+}
+function go(cat) { renderMarket(cat); tab('t-market'); }
+function toast(msg) {
+  const t = $('toast'); t.textContent = msg; t.classList.add('on');
+  clearTimeout(toast.t); toast.t = setTimeout(() => t.classList.remove('on'), 2500);
+}
+function openM(id) {
+  document.querySelectorAll('.modal').forEach(m => m.classList.remove('on'));
+  $('drawer').classList.remove('on');
+  $(id).classList.add('on'); $('ov').classList.add('on');
+}
+function closeAll() {
+  document.querySelectorAll('.modal').forEach(m => m.classList.remove('on'));
+  $('drawer').classList.remove('on'); $('ov').classList.remove('on');
+}
+function toggleDrawer() {   // раньше этой функции не было, из-за этого меню не открывалось
+  const open = !$('drawer').classList.contains('on');
+  closeAll();
+  if (open) { $('drawer').classList.add('on'); $('ov').classList.add('on'); }
+}
+function copyText(text, msg) {
+  const done = () => toast(msg);
+  const fallback = () => {
+    const el = document.createElement('input'); el.value = text; document.body.appendChild(el);
+    el.select(); try { document.execCommand('copy'); done(); } catch (e) { toast('Не удалось скопировать'); }
+    el.remove();
+  };
+  if (navigator.clipboard) navigator.clipboard.writeText(text).then(done, fallback); else fallback();
+}
+function support() {
+  const url = 'https://t.me/' + CFG.support;
+  if (tg.openTelegramLink) tg.openTelegramLink(url); else window.open(url, '_blank');
+}
+function copyRef() {
+  const id = tg.initDataUnsafe && tg.initDataUnsafe.user ? tg.initDataUnsafe.user.id : '';
+  copyText(`https://t.me/${CFG.bot}?start=${id}`, 'Реферальная ссылка скопирована!');
+}
+
+// ===== ОТПРАВКА БОТУ =====
+// sendData работает только если Mini App открыт через reply-кнопку (KeyboardButton с web_app).
+// После отправки Telegram сам закрывает приложение, это нормально.
+function send(data) {
+  if (!tg.initData) { toast('Открой магазин через кнопку в боте'); return false; }
+  try { tg.sendData(JSON.stringify(data)); return true; }
+  catch (e) { toast('Ошибка отправки, попробуй ещё раз'); return false; }
+}
+
+// ===== КОРЗИНА =====
+let cart = [];
+function addToCart(id) {
+  const it = byId(id); cart.push({id: it.id, title: it.title, price: it.price});
+  updateCart(); toast('Добавлено: ' + it.title);
+}
+function removeFromCart(i) { cart.splice(i, 1); updateCart(); }
+function updateCart() {
+  const n = cart.length, total = cart.reduce((s, i) => s + i.price, 0);
+  $('cb').style.display = n ? 'flex' : 'none'; $('cb').textContent = n;
+  $('c-empty').style.display = n ? 'none' : 'block'; $('c-full').style.display = n ? 'block' : 'none';
+  $('c-list').innerHTML = cart.map((it, i) =>
+    `<div class="box li"><div><div class="t">${it.title}</div><div class="cost" style="font-size:13px">${it.price} ₴</div></div>
+     <button class="add" onclick="removeFromCart(${i})"><i class="fa-solid fa-trash"></i></button></div>`).join('');
+  $('c-n').textContent = n + ' шт'; $('c-sum').textContent = total + ' ₴';
+}
+function checkout() {
+  if (!cart.length) return;
+  const total = cart.reduce((s, i) => s + i.price, 0);
+  // Баланс и оплату проверяет БОТ, сайт только отправляет заявку.
+  if (send({action: 'order', items: cart.map(i => ({id: i.id, title: i.title, price: i.price})), total})) {
+    cart = []; updateCart();
+  }
+}
+
+// ===== ПОПОЛНЕНИЕ =====
+function openCard(bank) {
+  $('bank-t').textContent = 'Пополнение через ' + bank; $('c-num').value = CFG.card;
+  openM('m-card'); openCard.bank = bank;
+}
+function submitCard() {
+  const amount = parseInt($('c-amt').value) || 0;
+  if (amount < 10) return toast('Минимальная сумма: 10 ₴');
+  if (send({action: 'deposit_card', amount, bank: openCard.bank})) closeAll();
+}
+function setSt(n) { $('st-in').value = n; calcSt(); }
+function calcSt() {
+  const n = parseInt($('st-in').value) || 0;
+  $('st-res').textContent = (n * CFG.rate).toFixed(2) + ' ₴'; $('st-btn').textContent = n;
+}
+function payStars() {
+  const n = parseInt($('st-in').value) || 0;
+  if (n < 1 || n > 10000) return toast('От 1 до 10000 звёзд');
+  send({action: 'create_star_invoice', stars: n});
+}
+function calcCu() { const n = parseInt($('cu-in').value) || 0; $('cu-p').textContent = Math.round(n * CFG.starPrice) + ' ₴'; }
+function addCustom() {
+  const n = parseInt($('cu-in').value) || 0;
+  if (n < 50 || n > 10000) return toast('От 50 до 10000 звёзд');
+  cart.push({id: 0, title: n + ' Telegram Stars', price: Math.round(n * CFG.starPrice)});
+  updateCart(); closeAll(); toast('Добавлено в корзину');
+}
+
+// ===== СТАРТ =====
+(function init() {
+  const u = tg.initDataUnsafe && tg.initDataUnsafe.user;
+  if (u) {
+    $('pname').textContent = u.first_name; $('pid').textContent = 'ID: ' + u.id;
+    if (u.photo_url) { const img = new Image(); img.src = u.photo_url; $('av').replaceChildren(img); }
+  }
+  // Эти числа только для показа. Настоящие значения хранит бот в своей базе.
+  $('bal').textContent = (parseFloat(q.get('bal')) || 0).toFixed(2);
+  $('stars').textContent = parseInt(q.get('coins')) || 0;
+  $('s-or').textContent = parseInt(q.get('orders')) || 0;
+  $('s-sp').textContent = (parseFloat(q.get('spent')) || 0) + ' ₴';
+  $('s-rf').textContent = parseInt(q.get('refs')) || 0;
+  renderMarket('all'); calcSt(); calcCu(); updateCart();
+})();
+</script>
+</body>
+</html>
