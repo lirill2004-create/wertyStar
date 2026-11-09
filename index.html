@@ -76,7 +76,6 @@ input{width:100%;background:var(--bg);border:1px solid var(--bd);border-radius:1
 <div class="top">
   <div class="row">
     <div class="pill" onclick="openM('m-dep')"><i class="fa-solid fa-wallet"></i><span id="bal">0.00</span> ₴</div>
-    <div class="pill" onclick="openM('m-dep')"><i class="fa-solid fa-coins g"></i><span id="stars">0</span></div>
   </div>
   <div class="menu-btn" onclick="toggleDrawer()"><i class="fa-solid fa-bars"></i></div>
 </div>
@@ -301,6 +300,11 @@ function copyRef() {
 // После отправки Telegram сам закрывает приложение, это нормально.
 function send(data) {
   if (!tg.initData) { toast('Открой магазин через кнопку в боте'); return false; }
+  // query_id есть, когда сайт открыт через меню или inline-кнопку: там sendData не работает
+  if (tg.initDataUnsafe && tg.initDataUnsafe.query_id) {
+    toast('Для покупок открой магазин кнопкой «🛒 Mini App» внизу чата');
+    return false;
+  }
   try { tg.sendData(JSON.stringify(data)); return true; }
   catch (e) { toast('Ошибка отправки, попробуй ещё раз'); return false; }
 }
@@ -367,7 +371,6 @@ function addCustom() {
   }
   // Эти числа только для показа. Настоящие значения хранит бот в своей базе.
   $('bal').textContent = (parseFloat(q.get('bal')) || 0).toFixed(2);
-  $('stars').textContent = parseInt(q.get('coins')) || 0;
   $('s-or').textContent = parseInt(q.get('orders')) || 0;
   $('s-sp').textContent = (parseFloat(q.get('spent')) || 0) + ' ₴';
   $('s-rf').textContent = parseInt(q.get('refs')) || 0;
